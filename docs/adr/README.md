@@ -18,3 +18,4 @@ guessing.
 - [0002. The README lives in .github/README.md](0002-the-readme-lives-in-github-readme.md)
 - [0003. The built theme is released, not committed](0003-the-built-theme-is-released-not-committed.md)
 - [0004. Icons use the Sweetie 16 palette](0004-icons-use-sweetie-16.md)
+- [0005. Extra aliases for icons Papirus does not draw](0005-extra-aliases-for-icons-papirus-does-not-draw.md)

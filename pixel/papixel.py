@@ -7,7 +7,8 @@ theme (default Papirus-Dark) and writes a new theme folder next to it:
 
     Papirus/  Papirus-Dark/  Papirus-Light/  Papirus-Pixel/   <- generated
 
-Papirus-Pixel holds only the redrawn icons and their aliases. Its
+Papirus-Pixel holds only the redrawn icons and their aliases, plus the extra
+aliases in pixel/aliases.txt for app icons Papirus does not draw. Its
 index.theme inherits from the base theme, so symbolic, panel and animation
 icons come from Papirus-Dark unchanged. No upstream file is modified, so
 merging upstream never conflicts.
@@ -441,6 +442,33 @@ def place_links(links):
         dropped += len(broken)
 
 
+def read_aliases(path):
+    """(name, target) pairs from aliases.txt, one pair per line, # comments."""
+    if not os.path.isfile(path):
+        return []
+    pairs = []
+    for line in open(path, encoding="utf8"):
+        words = line.split("#", 1)[0].split()
+        if len(words) == 2:
+            pairs.append(tuple(words))
+    return pairs
+
+
+def place_aliases(out, aliases):
+    """Link each alias to its target in every apps folder that has the target."""
+    made = 0
+    for size in sorted(os.listdir(out)):
+        apps = os.path.join(out, size, "apps")
+        if os.path.islink(os.path.join(out, size)) or not os.path.isdir(apps):
+            continue
+        for name, target in aliases:
+            link = os.path.join(apps, name + ".svg")
+            if os.path.exists(os.path.join(apps, target + ".svg")) and not os.path.lexists(link):
+                os.symlink(target + ".svg", link)
+                made += 1
+    return made
+
+
 def main():
     ap = argparse.ArgumentParser(description="Add the Papirus-Pixel theme to a Papirus checkout.",
                                  formatter_class=argparse.RawDescriptionHelpFormatter, epilog=__doc__)
@@ -497,13 +525,15 @@ def main():
             with open(path, "w", encoding="utf8") as f:
                 f.write(svg)
     broken = place_links(plan.links)
+    extra = place_aliases(out, read_aliases(os.path.join(os.path.dirname(os.path.abspath(__file__)), "aliases.txt")))
     write_index(base, out, a.name)
 
     for e in errors[:10]:
         print("error:", e)
     print(f"done: {a.name} written to {out}\n"
           f"  {len(plan.converts) - kept} icons redrawn, {kept} kept as original "
-          f"({len(errors)} errors), {len(plan.links) - broken} aliases, {broken} dangling aliases dropped")
+          f"({len(errors)} errors), {len(plan.links) - broken} aliases, {broken} dangling aliases dropped, "
+          f"{extra} links from aliases.txt")
 
 
 if __name__ == "__main__":
