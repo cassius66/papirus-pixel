@@ -67,7 +67,7 @@ holding hex colours.
 | `docs/adr/` | Decision records for this fork. |
 | `Papirus/`, `Papirus-Dark/`, `Papirus-Light/` | Upstream Papirus, unedited. |
 
-Only `pixel/`, `docs/` and `.github/README.md` and the workflow are this fork's.
+Only `pixel/`, `docs/`, `.github/README.md` and the workflow are this fork's.
 Everything else is upstream's.
 
 ## Not Done
