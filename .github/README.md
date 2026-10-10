@@ -2,8 +2,6 @@
 
 Papirus icons redrawn as 24 by 24 pixel art in a 16 colour palette.
 
-![Papirus-Pixel icons](../pixel/preview.png)
-
 ## Why
 
 Pixel art icons for a Linux desktop, without drawing 20,989 icons by hand.
@@ -62,7 +60,6 @@ holding hex colours.
 | `pixel/papixel.py` | The converter. Reads `Papirus-Dark`, writes `Papirus-Pixel`. |
 | `pixel/aliases.txt` | App icon names Papirus lacks, and the Papirus icon each one shows. |
 | `pixel/install.sh` | Installs the latest release into `~/.local/share/icons`. |
-| `pixel/preview.png` | The image above, from a real build. |
 | `.github/workflows/papirus-pixel.yml` | Builds and releases on push to `master`. |
 | `docs/adr/` | Decision records for this fork. |
 | `Papirus/`, `Papirus-Dark/`, `Papirus-Light/` | Upstream Papirus, unedited. |
