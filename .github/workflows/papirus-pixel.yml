@@ -1,0 +1,58 @@
+name: Papirus-Pixel release
+
+# Rebuilds Papirus-Pixel whenever the icons it is drawn from, or the script
+# that draws them, change on master, and attaches it to a release that
+# pixel/install.sh downloads.
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'Papirus/**'
+      - 'Papirus-Dark/**'
+      - 'pixel/papixel.py'
+      - '.github/workflows/papirus-pixel.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: papirus-pixel-release
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install the SVG renderer
+      run: |
+        sudo apt-get update
+        sudo apt-get install --no-install-recommends -y librsvg2-bin
+
+    - name: Build
+      run: python3 pixel/papixel.py
+
+    # Largest sizes first. Launchers that keep the first icon file they find,
+    # such as Omarchy's, then show the 24 px outlined drawing, not the 16 px one.
+    - name: Package
+      run: |
+        sizes=$(ls Papirus-Pixel | grep -E '^[0-9]+x' | sort -t x -k1,1nr)
+        tar -czf Papirus-Pixel.tar.gz Papirus-Pixel/index.theme $(printf 'Papirus-Pixel/%s ' $sizes)
+
+    - name: Publish
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        tag="pixel-$(git show -s --format=%cd --date=format:%Y%m%d HEAD)"
+        if gh release view "$tag" >/dev/null 2>&1; then
+          gh release upload "$tag" Papirus-Pixel.tar.gz --clobber
+        else
+          gh release create "$tag" Papirus-Pixel.tar.gz \
+            --title "Papirus-Pixel $tag" \
+            --notes "Built from $(git rev-parse --short HEAD) by pixel/papixel.py."
+        fi
