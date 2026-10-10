@@ -1,0 +1,10 @@
+# Icon names that apps ask for but Papirus does not draw, each followed by the
+# Papirus icon that papixel.py links it to. A name Papirus later adds is left
+# alone, so upstream's own drawing wins.
+#
+# name                 Papirus icon
+
+# imv, as Omarchy installs it: Omarchy's imv.desktop sets Icon=imv
+imv                    multimedia-photo-viewer
+# limine-snapper-sync, a btrfs snapshot tool like Btrfs Assistant
+LimineSnapperSync      btrfs-assistant

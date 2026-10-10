@@ -12,6 +12,7 @@ on:
       - 'Papirus/**'
       - 'Papirus-Dark/**'
       - 'pixel/papixel.py'
+      - 'pixel/aliases.txt'
       - '.github/workflows/papirus-pixel.yml'
   workflow_dispatch:
 

@@ -60,6 +60,7 @@ holding hex colours.
 | Path | Holds |
 |---|---|
 | `pixel/papixel.py` | The converter. Reads `Papirus-Dark`, writes `Papirus-Pixel`. |
+| `pixel/aliases.txt` | App icon names Papirus lacks, and the Papirus icon each one shows. |
 | `pixel/install.sh` | Installs the latest release into `~/.local/share/icons`. |
 | `pixel/preview.png` | The image above, from a real build. |
 | `.github/workflows/papirus-pixel.yml` | Builds and releases on push to `master`. |
@@ -89,6 +90,7 @@ See [docs/adr/](../docs/adr/README.md).
 - [0002. The README lives in .github/README.md](../docs/adr/0002-the-readme-lives-in-github-readme.md)
 - [0003. The built theme is released, not committed](../docs/adr/0003-the-built-theme-is-released-not-committed.md)
 - [0004. Icons use the Sweetie 16 palette](../docs/adr/0004-icons-use-sweetie-16.md)
+- [0005. Extra aliases for icons Papirus does not draw](../docs/adr/0005-extra-aliases-for-icons-papirus-does-not-draw.md)
 
 ## License
 
