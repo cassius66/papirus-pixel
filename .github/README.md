@@ -1,12 +1,12 @@
 # papirus-pixel
 
-Papirus icons redrawn as 24 by 24 pixel art in a 16 colour palette.
+Papirus icons redrawn as 24 by 24 pixel art in a 16 color palette.
 
 ## Why
 
 Pixel art icons for a Linux desktop, without drawing 20,989 icons by hand.
-`pixel/papixel.py` renders each Papirus icon, snaps it to a grid, moves every
-pixel to the nearest colour of the
+`pixel/papirus-pixel.py` renders each Papirus icon, snaps it to a grid, moves every
+pixel to the nearest color of the
 [Sweetie 16](https://lospec.com/palette-list/sweetie-16) palette, and adds a
 1 pixel outline. It is a fork of
 [Papirus](https://github.com/PapirusDevelopmentTeam/papirus-icon-theme) so
@@ -38,33 +38,32 @@ To build it yourself you need Python 3.8 or newer and `rsvg-convert`
 ```bash
 git clone https://github.com/cassius66/papirus-pixel
 cd papirus-pixel
-python3 pixel/papixel.py
+python3 pixel/papirus-pixel.py
 make install PREFIX=$HOME/.local ICON_THEMES=Papirus-Pixel
 ```
 
 A build takes about 3.5 minutes on 8 cores. Other palettes:
 
 ```bash
-python3 pixel/papixel.py --list-palettes
-python3 pixel/papixel.py -p nord -n Papirus-Pixel-Nord
-python3 pixel/papixel.py -p ~/.local/state/omarchy/current/theme/colors.toml -n Papirus-Pixel-Mine
+python3 pixel/papirus-pixel.py --list-palettes
+python3 pixel/papirus-pixel.py -p nord -n Papirus-Pixel-Nord
+python3 pixel/papirus-pixel.py -p ~/.local/state/omarchy/current/theme/colors.toml -n Papirus-Pixel-Mine
 ```
 
-`--palette` takes a built in name, a comma list of hex colours, or any file
-holding hex colours.
+`--palette` takes a built in name, a comma list of hex colors, or any file
+holding hex colors.
 
 ## Structure
 
 | Path | Holds |
 |---|---|
-| `pixel/papixel.py` | The converter. Reads `Papirus-Dark`, writes `Papirus-Pixel`. |
+| `pixel/papirus-pixel.py` | The converter. Reads `Papirus-Dark`, writes `Papirus-Pixel`. |
 | `pixel/aliases.txt` | App icon names Papirus lacks, and the Papirus icon each one shows. |
 | `pixel/install.sh` | Installs the latest release into `~/.local/share/icons`. |
 | `.github/workflows/papirus-pixel.yml` | Builds and releases on push to `master`. |
-| `docs/adr/` | Decision records for this fork. |
 | `Papirus/`, `Papirus-Dark/`, `Papirus-Light/` | Upstream Papirus, unedited. |
 
-Only `pixel/`, `docs/`, `.github/README.md` and the workflow are this fork's.
+Only `pixel/`, `.github/README.md` and the workflow are this fork's.
 Everything else is upstream's.
 
 ## Not Done
@@ -81,13 +80,11 @@ Everything else is upstream's.
 
 ## Decisions
 
-See [docs/adr/](../docs/adr/README.md).
-
-- [0001. The fork keeps upstream's license and layout](../docs/adr/0001-the-fork-keeps-upstream-license-and-layout.md)
-- [0002. The README lives in .github/README.md](../docs/adr/0002-the-readme-lives-in-github-readme.md)
-- [0003. The built theme is released, not committed](../docs/adr/0003-the-built-theme-is-released-not-committed.md)
-- [0004. Icons use the Sweetie 16 palette](../docs/adr/0004-icons-use-sweetie-16.md)
-- [0005. Extra aliases for icons Papirus does not draw](../docs/adr/0005-extra-aliases-for-icons-papirus-does-not-draw.md)
+1. The fork keeps upstream's GPL 3.0 license and never edits an upstream file.
+2. This fork's README is `.github/README.md`, so upstream's README stays untouched.
+3. The built theme is released, not committed. The archive lists the largest sizes first.
+4. The icons use the Sweetie 16 palette.
+5. `pixel/aliases.txt` links app icon names that Papirus does not draw.
 
 ## License
 
