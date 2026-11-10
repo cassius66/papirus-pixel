@@ -4,15 +4,23 @@
 # cassius66/papirus-pixel, into ~/.local/share/icons.
 #
 # Usage
-#   bash install.sh              install, or update to the latest release
-#   bash install.sh --uninstall  remove it
+#   bash install.sh                      install, or update to the latest release
+#   bash install.sh --light              the same for Papirus-Pixel-Light
+#   bash install.sh [--light] --uninstall  remove it
 #
-# Papirus-Pixel inherits from Papirus-Dark, so Papirus must be installed first.
+# Papirus-Pixel inherits from Papirus-Dark, and Papirus-Pixel-Light from
+# Papirus-Light, so Papirus must be installed first.
 
 set -euo pipefail
 
 REPO=cassius66/papirus-pixel
 NAME=Papirus-Pixel
+BASE=Papirus-Dark
+if [[ ${1:-} == "--light" ]]; then
+  NAME=Papirus-Pixel-Light
+  BASE=Papirus-Light
+  shift
+fi
 # Not $XDG_DATA_HOME: launchers that scan icon folders by path, such as
 # Omarchy's, look in ~/.local/share/icons whatever that variable says.
 DEST="$HOME/.local/share/icons"
@@ -26,10 +34,10 @@ fi
 
 base=false
 for dir in "$DEST" "$HOME/.icons" /usr/local/share/icons /usr/share/icons; do
-  [[ -f $dir/Papirus-Dark/index.theme ]] && base=true
+  [[ -f $dir/$BASE/index.theme ]] && base=true
 done
 if [[ $base == false ]]; then
-  echo "Papirus-Pixel inherits from Papirus-Dark, which is not installed." >&2
+  echo "$NAME inherits from $BASE, which is not installed." >&2
   echo "Install it first, on Arch: sudo pacman -S papirus-icon-theme" >&2
   exit 1
 fi

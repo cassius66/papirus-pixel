@@ -27,8 +27,17 @@ curl -fsSL https://raw.githubusercontent.com/cassius66/papirus-pixel/master/pixe
 gsettings set org.gnome.desktop.interface icon-theme Papirus-Pixel
 ```
 
+For a light desktop, install Papirus-Pixel-Light, which inherits
+Papirus-Light, so its small action, device and place icons are dark:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/cassius66/papirus-pixel/master/pixel/install.sh | bash -s -- --light
+gsettings set org.gnome.desktop.interface icon-theme Papirus-Pixel-Light
+```
+
 On Omarchy, the [Wizard theme](https://github.com/cassius66/omarchy-wizard-theme)
-selects it for you. Remove it with `bash pixel/install.sh --uninstall`.
+selects the light one for you. Remove either with
+`bash pixel/install.sh [--light] --uninstall`.
 
 ## Usage
 
@@ -40,6 +49,9 @@ git clone https://github.com/cassius66/papirus-pixel
 cd papirus-pixel
 python3 pixel/papirus-pixel.py
 make install PREFIX=$HOME/.local ICON_THEMES=Papirus-Pixel
+# the light variant
+python3 pixel/papirus-pixel.py -b Papirus-Light -n Papirus-Pixel-Light
+make install PREFIX=$HOME/.local ICON_THEMES=Papirus-Pixel-Light
 ```
 
 A build takes about 3.5 minutes on 8 cores. Other palettes:
@@ -57,10 +69,10 @@ holding hex colors.
 
 | Path | Holds |
 |---|---|
-| `pixel/papirus-pixel.py` | The converter. Reads `Papirus-Dark`, writes `Papirus-Pixel`. |
+| `pixel/papirus-pixel.py` | The converter. Reads `Papirus-Dark`, writes `Papirus-Pixel`; with `-b Papirus-Light -n Papirus-Pixel-Light`, the light variant. |
 | `pixel/aliases.txt` | App icon names Papirus lacks, and the Papirus icon each one shows. |
-| `pixel/install.sh` | Installs the latest release into `~/.local/share/icons`. |
-| `.github/workflows/papirus-pixel.yml` | Builds and releases on push to `master`. |
+| `pixel/install.sh` | Installs the latest release into `~/.local/share/icons`, the light variant with `--light`. |
+| `.github/workflows/papirus-pixel.yml` | Builds both variants and releases them on push to `master`. |
 | `Papirus/`, `Papirus-Dark/`, `Papirus-Light/` | Upstream Papirus, unedited. |
 
 Only `pixel/`, `.github/README.md` and the workflow are this fork's.
@@ -85,6 +97,10 @@ Everything else is upstream's.
 3. The built theme is released, not committed. The archive lists the largest sizes first.
 4. The icons use the Sweetie 16 palette.
 5. `pixel/aliases.txt` links app icon names that Papirus does not draw.
+6. A light desktop gets its own variant, Papirus-Pixel-Light, built from
+   Papirus-Light. Papirus-Dark's small action, device and place icons are
+   light gray and vanish on a light ground. Both variants draw the same app
+   icons, so a launcher that picks between them shows the same picture.
 
 ## License
 

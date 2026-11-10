@@ -1,6 +1,6 @@
 name: Papirus-Pixel release
 
-# Rebuilds Papirus-Pixel whenever the icons it is drawn from, or the script
+# Rebuilds Papirus-Pixel, and Papirus-Pixel-Light for light desktops, whenever the icons it is drawn from, or the script
 # that draws them, change on master, and attaches it to a release that
 # pixel/install.sh downloads.
 
@@ -11,6 +11,7 @@ on:
     paths:
       - 'Papirus/**'
       - 'Papirus-Dark/**'
+      - 'Papirus-Light/**'
       - 'pixel/papirus-pixel.py'
       - 'pixel/aliases.txt'
       - '.github/workflows/papirus-pixel.yml'
@@ -35,15 +36,21 @@ jobs:
         sudo apt-get update
         sudo apt-get install --no-install-recommends -y librsvg2-bin
 
+    # The light variant inherits Papirus-Light, whose small action, device and
+    # place icons are dark, as a light desktop needs them.
     - name: Build
-      run: python3 pixel/papirus-pixel.py
+      run: |
+        python3 pixel/papirus-pixel.py
+        python3 pixel/papirus-pixel.py -b Papirus-Light -n Papirus-Pixel-Light
 
     # Largest sizes first. Launchers that keep the first icon file they find,
     # such as Omarchy's, then show the 24 px outlined drawing, not the 16 px one.
     - name: Package
       run: |
-        sizes=$(ls Papirus-Pixel | grep -E '^[0-9]+x' | sort -t x -k1,1nr)
-        tar -czf Papirus-Pixel.tar.gz Papirus-Pixel/index.theme $(printf 'Papirus-Pixel/%s ' $sizes)
+        for name in Papirus-Pixel Papirus-Pixel-Light; do
+          sizes=$(ls $name | grep -E '^[0-9]+x' | sort -t x -k1,1nr)
+          tar -czf $name.tar.gz $name/index.theme $(printf "$name/%s " $sizes)
+        done
 
     - name: Publish
       env:
@@ -51,9 +58,9 @@ jobs:
       run: |
         tag="pixel-$(git show -s --format=%cd --date=format:%Y%m%d HEAD)"
         if gh release view "$tag" >/dev/null 2>&1; then
-          gh release upload "$tag" Papirus-Pixel.tar.gz --clobber
+          gh release upload "$tag" Papirus-Pixel.tar.gz Papirus-Pixel-Light.tar.gz --clobber
         else
-          gh release create "$tag" Papirus-Pixel.tar.gz \
+          gh release create "$tag" Papirus-Pixel.tar.gz Papirus-Pixel-Light.tar.gz \
             --title "Papirus-Pixel $tag" \
             --notes "Built from $(git rev-parse --short HEAD) by pixel/papirus-pixel.py."
         fi
