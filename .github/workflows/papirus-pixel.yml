@@ -17,18 +17,23 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: papirus-pixel-release
   cancel-in-progress: true
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.name.outputs.tag }}
+      short: ${{ steps.name.outputs.short }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
 
     - name: Install the SVG renderer
       run: |
@@ -45,15 +50,42 @@ jobs:
         sizes=$(ls Papirus-Pixel | grep -E '^[0-9]+x' | sort -t x -k1,1nr)
         tar -czf Papirus-Pixel.tar.gz Papirus-Pixel/index.theme $(printf 'Papirus-Pixel/%s ' $sizes)
 
+    - name: Name the release
+      id: name
+      run: |
+        echo "tag=pixel-$(git show -s --format=%cd --date=format:%Y%m%d HEAD)" >> "$GITHUB_OUTPUT"
+        echo "short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+
+    - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: papirus-pixel
+        path: Papirus-Pixel.tar.gz
+        retention-days: 1
+
+  # Only this job can write, and it runs no code from the repository.
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+      with:
+        name: papirus-pixel
+
     - name: Publish
       env:
         GH_TOKEN: ${{ github.token }}
+        TAG: ${{ needs.build.outputs.tag }}
+        SHORT: ${{ needs.build.outputs.short }}
+        REPO: ${{ github.repository }}
       run: |
-        tag="pixel-$(git show -s --format=%cd --date=format:%Y%m%d HEAD)"
-        if gh release view "$tag" >/dev/null 2>&1; then
-          gh release upload "$tag" Papirus-Pixel.tar.gz --clobber
+        if gh release view "$TAG" -R "$REPO" >/dev/null 2>&1; then
+          gh release upload "$TAG" Papirus-Pixel.tar.gz --clobber -R "$REPO"
         else
-          gh release create "$tag" Papirus-Pixel.tar.gz \
-            --title "Papirus-Pixel $tag" \
-            --notes "Built from $(git rev-parse --short HEAD) by pixel/papirus-pixel.py."
+          gh release create "$TAG" Papirus-Pixel.tar.gz -R "$REPO" \
+            --target "$GITHUB_SHA" \
+            --title "Papirus-Pixel $TAG" \
+            --notes "Built from $SHORT by pixel/papirus-pixel.py."
         fi
