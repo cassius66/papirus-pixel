@@ -41,7 +41,17 @@ tmp=$(mktemp -d "$HOME/.local/share/.papirus-pixel.XXXXXX")
 trap 'rm -rf "$tmp"' EXIT
 
 echo "Downloading $URL"
-curl -fsSL "$URL" | tar -xz -C "$tmp"
+curl -fsSL -o "$tmp/$NAME.tar.gz" "$URL"
+# Releases from 2026-11-23 on carry a checksum file; older ones do not.
+if curl -fsSL -o "$tmp/$NAME.tar.gz.sha256" "$URL.sha256" 2>/dev/null; then
+  if ! (cd "$tmp" && sha256sum --check --status "$NAME.tar.gz.sha256"); then
+    echo "The archive does not match its checksum; nothing installed." >&2
+    exit 1
+  fi
+  echo "Checksum matches."
+fi
+tar -xzf "$tmp/$NAME.tar.gz" -C "$tmp"
+rm -f "$tmp/$NAME.tar.gz" "$tmp/$NAME.tar.gz.sha256"
 if [[ ! -f $tmp/$NAME/index.theme ]]; then
   echo "The release archive has no $NAME/index.theme" >&2
   exit 1

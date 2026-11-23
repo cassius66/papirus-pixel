@@ -49,6 +49,7 @@ jobs:
       run: |
         sizes=$(ls Papirus-Pixel | grep -E '^[0-9]+x' | sort -t x -k1,1nr)
         tar -czf Papirus-Pixel.tar.gz Papirus-Pixel/index.theme $(printf 'Papirus-Pixel/%s ' $sizes)
+        sha256sum Papirus-Pixel.tar.gz > Papirus-Pixel.tar.gz.sha256
 
     - name: Name the release
       id: name
@@ -59,7 +60,9 @@ jobs:
     - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       with:
         name: papirus-pixel
-        path: Papirus-Pixel.tar.gz
+        path: |
+          Papirus-Pixel.tar.gz
+          Papirus-Pixel.tar.gz.sha256
         retention-days: 1
 
   # Only this job can write, and it runs no code from the repository.
@@ -82,9 +85,9 @@ jobs:
         REPO: ${{ github.repository }}
       run: |
         if gh release view "$TAG" -R "$REPO" >/dev/null 2>&1; then
-          gh release upload "$TAG" Papirus-Pixel.tar.gz --clobber -R "$REPO"
+          gh release upload "$TAG" Papirus-Pixel.tar.gz Papirus-Pixel.tar.gz.sha256 --clobber -R "$REPO"
         else
-          gh release create "$TAG" Papirus-Pixel.tar.gz -R "$REPO" \
+          gh release create "$TAG" Papirus-Pixel.tar.gz Papirus-Pixel.tar.gz.sha256 -R "$REPO" \
             --target "$GITHUB_SHA" \
             --title "Papirus-Pixel $TAG" \
             --notes "Built from $SHORT by pixel/papirus-pixel.py."
