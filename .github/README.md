@@ -27,8 +27,7 @@ curl -fsSL https://raw.githubusercontent.com/cassius66/papirus-pixel/master/pixe
 gsettings set org.gnome.desktop.interface icon-theme Papirus-Pixel
 ```
 
-On Omarchy, the [Wizard theme](https://github.com/cassius66/omarchy-wizard-theme)
-selects it for you. Remove it with `bash pixel/install.sh --uninstall`.
+Remove it with `bash pixel/install.sh --uninstall`.
 
 ## Usage
 
