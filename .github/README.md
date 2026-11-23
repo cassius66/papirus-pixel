@@ -23,9 +23,13 @@ sudo pacman -S papirus-icon-theme
 Then install Papirus-Pixel for your user, from the latest release:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/cassius66/papirus-pixel/master/pixel/install.sh | bash
+curl -fsSLO https://raw.githubusercontent.com/cassius66/papirus-pixel/master/pixel/install.sh
+less install.sh    # read it first
+bash install.sh
 gsettings set org.gnome.desktop.interface icon-theme Papirus-Pixel
 ```
+
+The script checks the release archive against the checksum published with it before it installs anything.
 
 Remove it with `bash pixel/install.sh --uninstall`.
 
